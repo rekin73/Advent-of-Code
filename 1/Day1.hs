@@ -1,0 +1,56 @@
+import Text.Read (readMaybe)
+import Data.Maybe
+-- Read and Process functions
+readInput :: String -> IO [String]
+readInput input = do
+    string <- readFile input
+    return $ lines string
+
+data Move = L Int | R Int
+    deriving Show
+parseMove :: String -> Maybe Move
+parseMove (x:xs) = let
+    rotNum = readMaybe xs
+    m | x == 'L' = Just L | x == 'R' = Just R | otherwise = Nothing
+    in m <*> rotNum
+-- The Functions
+move :: Int -> Move -> Int
+move position (L i) = mod (position - i) 100
+move position (R i) = mod (position + i) 100
+getLockval :: [a] -> Int -> a
+getLockval lock position = lock !! position
+movesToVals :: [Move] -> [a] -> Int -> [a]
+movesToVals [] _ _ = []
+movesToVals (m:moves) lock start = getLockval lock newPos : movesToVals moves lock newPos where
+    newPos = move start m
+
+-- Part2
+count0Clicks pos (R i) = let
+    fullRot = div i 100
+    more0 = div (pos + mod i 100) 100
+    in
+    fullRot + more0
+count0Clicks pos (L i) = let
+    fullRot = div i 100
+    more0 = abs $ div (pos - mod i 100) 100
+    in
+    fullRot + more0
+seqCount [] _ = []
+seqCount (m:moves) pos = count0Clicks pos m : seqCount moves (move pos m)
+-- test
+testMovesString = ["L68","L30","R48","L5","R60","L55","L1","L99","R14","L82"]
+testMoves = mapMaybe parseMove testMovesString
+-- input file
+input = "input" :: String
+
+main = do
+    lines <- readInput input
+    let moves = mapMaybe parseMove lines
+    let lock = [0 .. 99]
+    let vals = movesToVals moves lock 50
+    let part2Sol = sum $ seqCount moves 50
+    print "Part1: "
+    print $ length $ filter (== 0) vals
+    print "Part2: "
+    print part2Sol
+    print $ zip moves (seqCount moves 50)
