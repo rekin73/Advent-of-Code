@@ -1,11 +1,13 @@
 module Day4 where
 
+input :: String
 input = "inputs/Day4"
 
 readInput :: FilePath -> IO [String]
 readInput fileName = do
     inData <- readFile fileName
     return $ lines inData
+testAdj :: Foldable t => Int -> Int -> [t a] -> [(Int, Int)]
 testAdj row col rolls= [(r,c)|
     r <- [row - 1, row, row + 1],
     r >= 0,
@@ -25,6 +27,8 @@ checkRoll row col rolls = let
         c >= 0, c/=r || (c==r) && c/=col && r/=row ]
     in
     sum adj
+
+counted :: [[Char]] -> [Int]
 counted rolls = [checkRoll i j rolls |
     i <- [0 .. length rolls-1],
     j <- [0 .. (length . head $ rolls)-1]]
@@ -32,6 +36,7 @@ counted rolls = [checkRoll i j rolls |
 countRolls :: [[Char]] -> Int
 countRolls rolls = length . filter (<4) $ counted rolls
 -- test
+testInput :: [String]
 testInput = ["..@@.@@@@.","@@@.@.@.@@","@@@@@.@.@@","@.@@@@..@.","@@.@@@@.@@",".@@@@@@@.@",".@.@.@.@@@","@.@@@.@@@@",".@@@@@@@@.","@.@.@@@.@."]
 
 main :: IO ()
