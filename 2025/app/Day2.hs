@@ -1,4 +1,4 @@
-module Day2 where
+module Day2 (main) where
 
 import Data.List.Split
 import Text.Read
@@ -44,6 +44,6 @@ testInput = ["11-22","95-115","998-1012","1188511880-1188511890","222220-222224"
 main :: IO()
 main = do
     rangeStrings <- readInput input
-    -- print $ part1 rangeStrings
+    print $ part1 rangeStrings
     print $ part2 rangeStrings
     return ()
